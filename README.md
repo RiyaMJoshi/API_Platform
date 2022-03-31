@@ -1,7 +1,7 @@
 # API Platform
 
 Well hi there! This repository holds the code and script
-for the [API Platform](https://symfonycasts.com/screencast/api-platform) course on SymfonyCasts.
+for the [API Platform](https://symfonycasts.com/screencast/api-platform) course.
 
 ## Setup
 
@@ -48,8 +48,7 @@ Have fun!
 ## Have Ideas, Feedback or an Issue?
 
 If you have suggestions or questions, please feel free to
-open an issue on this repository or comment on the course
-itself. We're watching both :).
+open an issue on this repository :).
 
 ## Thanks!
 
