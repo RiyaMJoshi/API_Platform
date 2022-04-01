@@ -2,11 +2,18 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use Carbon\Carbon;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CheeseListingRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
+
 
 /**
  * @ApiResource(
@@ -20,6 +27,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *  shortName="cheeses"
  * )
  * @ORM\Entity(repositoryClass=CheeseListingRepository::class)
+ * @ApiFilter(BooleanFilter::class, properties={"isPublished"})
+ * @ApiFilter(SearchFilter::class, properties={"title": "partial", "description":"partial"})
+ * @ApiFilter(RangeFilter::class, properties={"price"})
+ * @ApiFilter(PropertyFilter::class)
  */
 class CheeseListing
 {
@@ -60,9 +71,10 @@ class CheeseListing
      */
     private $isPublished = false;
 
-    public function __construct()
+    public function __construct(string $title = null)
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->title = $title;
     }
 
     public function getId(): ?int
@@ -75,18 +87,29 @@ class CheeseListing
         return $this->title;
     }
 
-    public function setTitle(string $title): self
-    {
-        $this->title = $title;
+    // public function setTitle(string $title): self
+    // {
+    //     $this->title = $title;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
+    /**
+     * @Groups("cheese_listing:read")
+     */
+    public function getShortDescription(): ?string
+    {
+        if (strlen($this->description) < 40) {
+            return $this->description;
+        }   
+
+        return substr($this->description, 0, 40).'...';
+    }
     public function setDescription(string $description): self
     {
         $this->description = $description;
@@ -98,6 +121,7 @@ class CheeseListing
      * The description of the cheese as raw text.
      *
      * @Groups("cheese_listing:write")
+     * @SerializedName("description")
      */
     public function setTextDescription(string $description): self
     {
