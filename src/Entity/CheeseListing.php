@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints\Valid;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
@@ -20,7 +21,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *  collectionOperations={"get", "post"},
  *  itemOperations={
- *      "get"={}, 
+ *      "get"={
+ *              "normalization_context"={"groups"={"cheese_listing:read", "cheese_listing:item:get"}},
+ *          }, 
  *      "put"
  *  },
  *  normalizationContext={"groups"={"cheese_listing:read"}, "swagger_definition_name"="Read"},
@@ -88,6 +91,7 @@ class CheeseListing
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="cheeseListings")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"cheese_listing:read", "cheese_listing:write"})
+     * @Assert\Valid()
      */
     private $owner;
 
